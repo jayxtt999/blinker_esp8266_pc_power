@@ -13,7 +13,8 @@ String power_msg = "";
 uint32_t gap_time = 200000; // 默认检测时长，20分钟检测一次
 // 新建组件对象
 BlinkerButton Button1("btn-power"); //btn-power为你新增按钮的组件键名
-BlinkerText Text1("tex-power");//tex-power为你新增按钮的组件键名
+#define TEXTE_1 "tex-power"//tex-power为你新增按钮的组件键名
+BlinkerText Text1(TEXTE_1);
 WiFiServer server(6000);//开启一个tcp服务用于第三方控制，你也可以调整为http服务
 
 // 按下按键即会执行该函数
@@ -23,11 +24,11 @@ void button1_callback(const String &state)
     power();
 }
 
-//高低电平切换
 void power()
 {
+
     digitalWrite(0, 0);
-    delay(1000);
+    delay(500);
     digitalWrite(0, 1);
     if (pc_status == 1)
     {
@@ -69,11 +70,10 @@ void setup()
     server.begin();
 }
 
-//状态检测
 void powerStatus()
 {
 
-    if (Ping.ping(PCIP))
+    if (Ping.ping(PCIP,1))
     {
         pc_status = 1;
         power_msg = "已开机";
@@ -96,7 +96,6 @@ void loop()
         gap_time = 200000;
         powerStatus();
     }
-    //这里当tcp连接收到POWER\r时，触发响应
     WiFiClient client = server.available();
     if (client)
     {
